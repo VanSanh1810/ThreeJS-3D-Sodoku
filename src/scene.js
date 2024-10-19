@@ -94,6 +94,29 @@ export function createScene() {
         let intersections = raycaster.intersectObjects(scene.children, true);
         // selecting object
         if (intersections.length > 0 && intersections[0].object) {
+            if (!event.ctrlKey) {
+                const AXIS_NAME = ['X', 'Y', 'Z'];
+                selectedCell.forEach((item) => {
+                    // const cellRef = sodokuObjList[item.cordinate.x][item.cordinate.y][item.cordinate.z].cell;
+                    const cellRef = scene.getObjectById(item.cellId);
+
+                    //console.log(cellRef);
+                    cellRef.children.forEach((group) => {
+                        // console.log(group);
+                        // console.log(group.userData?.type);
+                        // console.log(AXIS_NAME.indexOf(group.userData?.type));
+                        if (group.userData?.type && AXIS_NAME.indexOf(group.userData.type) !== -1) {
+                            group.children.map((o) => {
+                                if (o.userData.type === 'Selection') {
+                                    console.log(o);
+                                    o.visible = false;
+                                }
+                            });
+                        }
+                    });
+                });
+                selectedCell = [];
+            }
             // box select
             const axisData = axis.getAxisData();
             if (axisData.currentAxisSelected) {
@@ -101,28 +124,22 @@ export function createScene() {
                     let flag = false;
                     const obj = intersections[i].object;
                     if (obj.userData.cellId) {
-                        console.log(obj);
+                        //console.log(obj);
                         switch (axisData.currentAxisSelected) {
                             case 'X':
                                 if (obj.userData.data?.cordinate?.x === axisData.corTrackX) {
                                     obj.parent.children.some((o) => {
                                         if (o.userData.type === 'X') {
                                             o.children.some((t) => {
-                                                if (t.userData.type === 'Selection') {
-                                                    if (!event.ctrlKey) {
-                                                        selectedCell.forEach((item) => {
-                                                            item.selectionRef.visible = false;
-                                                        });
-                                                        selectedCell = [];
-                                                    }
+                                                if (
+                                                    t.userData.type === 'Selection' &&
+                                                    !selectedCell.some((c) => c.cellId === obj.userData.cellId)
+                                                ) {
                                                     t.visible = true;
-                                                    if (!selectedCell.some((c) => c.cellId === obj.userData.cellId)) {
-                                                        selectedCell.push({
-                                                            cellId: obj.userData.cellId,
-                                                            cordinate: obj.userData.data.cordinate,
-                                                            selectionRef: t,
-                                                        });
-                                                    }
+                                                    selectedCell.push({
+                                                        cellId: obj.userData.cellId,
+                                                        cordinate: obj.userData.data.cordinate,
+                                                    });
                                                     return true;
                                                 }
                                             });
@@ -136,21 +153,15 @@ export function createScene() {
                                     obj.parent.children.some((o) => {
                                         if (o.userData.type === 'Y') {
                                             o.children.some((t) => {
-                                                if (t.userData.type === 'Selection') {
-                                                    if (!event.ctrlKey) {
-                                                        selectedCell.forEach((item) => {
-                                                            item.selectionRef.visible = false;
-                                                        });
-                                                        selectedCell = [];
-                                                    }
+                                                if (
+                                                    t.userData.type === 'Selection' &&
+                                                    !selectedCell.some((c) => c.cellId === obj.userData.cellId)
+                                                ) {
                                                     t.visible = true;
-                                                    if (!selectedCell.some((c) => c.cellId === obj.userData.cellId)) {
-                                                        selectedCell.push({
-                                                            cellId: obj.userData.cellId,
-                                                            cordinate: obj.userData.data.cordinate,
-                                                            selectionRef: t,
-                                                        });
-                                                    }
+                                                    selectedCell.push({
+                                                        cellId: obj.userData.cellId,
+                                                        cordinate: obj.userData.data.cordinate,
+                                                    });
                                                     return true;
                                                 }
                                             });
@@ -164,21 +175,15 @@ export function createScene() {
                                     obj.parent.children.some((o) => {
                                         if (o.userData.type === 'Z') {
                                             o.children.some((t) => {
-                                                if (t.userData.type === 'Selection') {
-                                                    if (!event.ctrlKey) {
-                                                        selectedCell.forEach((item) => {
-                                                            item.selectionRef.visible = false;
-                                                        });
-                                                        selectedCell = [];
-                                                    }
+                                                if (
+                                                    t.userData.type === 'Selection' &&
+                                                    !selectedCell.some((c) => c.cellId === obj.userData.cellId)
+                                                ) {
                                                     t.visible = true;
-                                                    if (!selectedCell.some((c) => c.cellId === obj.userData.cellId)) {
-                                                        selectedCell.push({
-                                                            cellId: obj.userData.cellId,
-                                                            cordinate: obj.userData.data.cordinate,
-                                                            selectionRef: t,
-                                                        });
-                                                    }
+                                                    selectedCell.push({
+                                                        cellId: obj.userData.cellId,
+                                                        cordinate: obj.userData.data.cordinate,
+                                                    });
                                                     return true;
                                                 }
                                             });
