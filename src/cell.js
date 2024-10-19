@@ -136,6 +136,32 @@ export function createCell(number, cordinate) {
             type: orientation,
         };
 
+        //plane
+        const geometryPlane = new THREE.PlaneGeometry(2, 2);
+        const materialPlane = new THREE.MeshBasicMaterial({
+            color: 0x777777,
+            side: THREE.DoubleSide,
+            opacity: 0.2,
+            transparent: true,
+            depthTest: false,
+        });
+        const plane = new THREE.Mesh(geometryPlane, materialPlane);
+        plane.userData = {
+            type: 'Selection',
+        };
+        cube.add(plane);
+
+        switch (orientation) {
+            case 'X':
+                plane.rotation.y = Math.PI / 2;
+                break;
+            case 'Y':
+                plane.rotation.x = Math.PI / 2;
+                break;
+            case 'Z':
+                break;
+        }
+
         return cube;
     }
 
