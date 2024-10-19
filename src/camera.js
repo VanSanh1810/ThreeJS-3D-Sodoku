@@ -8,25 +8,25 @@ export function createCamera(gameWindow) {
     const RIGHT_MOUSE_BUTTON = 2;
 
     const MIN_CAMERA_RADIUS = 0;
-    const MAX_CAMERA_RADIUS = 60;
-    const MIN_CAMERA_ELEVATION = 0;
-    const MAX_CAMERA_ELEVATION = 180;
+    const MAX_CAMERA_RADIUS = 2000;
+    const MIN_CAMERA_ELEVATION = -90;
+    const MAX_CAMERA_ELEVATION = 90;
     const ROTATION_SEN = 0.5;
-    const ZOOM_SEN = 0.02;
+    const ZOOM_SEN = 3;
     const PAN_SEN = 0.01;
     const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
     const cameraOrigin = new THREE.Vector3(8, 8, 8);
     let cameraRadius = (MIN_CAMERA_RADIUS + MAX_CAMERA_RADIUS) / 2;
-    let cameraAzimuth = -90;
-    let cameraElevation = 0;
+    let cameraAzimuth = -45;
+    let cameraElevation = 30;
     let isLeftMouseDown = false;
     let isRightMouseDown = false;
     let isMiddleMouseDown = false;
     let preMouseX = 0;
     let preMouseY = 0;
 
-    const camera = new THREE.PerspectiveCamera(70, gameWindow.offsetWidth / gameWindow.offsetHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(2, gameWindow.offsetWidth / gameWindow.offsetHeight, 0.1, 4000);
     camera.layers.set(0);
 
     updateCameraPosition();
@@ -97,10 +97,39 @@ export function createCamera(gameWindow) {
         camera.lookAt(cameraOrigin);
         camera.updateMatrix();
     }
+
+    function set2DView(cor) {
+        //X Y Z
+        switch (cor) {
+            case 'X':
+                cameraAzimuth = -90;
+                cameraElevation = 0;
+                break;
+            case 'Y':
+                cameraAzimuth = 0;
+                cameraElevation = 90;
+                break;
+            case 'Z':
+                cameraAzimuth = 0;
+                cameraElevation = 0;
+                break;
+            default:
+                break;
+        }
+        updateCameraPosition();
+    }
+
+    function set3DView() {
+        cameraAzimuth = -45;
+        cameraElevation = 30;
+        updateCameraPosition();
+    }
     return {
         camera,
         onMouseDown,
         onMouseUp,
         onMouseMove,
+        set2DView,
+        set3DView,
     };
 }

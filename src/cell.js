@@ -2,6 +2,22 @@ import * as THREE from 'three';
 import { findNearestCenter } from './helper/findNearestCenter';
 
 export function createCell(number, cordinate) {
+    const DEFAULT_NUMBER_POS = [110, 130];
+    const DEFAULT_NUMBER_SCALE = [3.8 * 0.85, 2 * 0.85, 1 * 0.85];
+    const DEFAULT_NUMBER_FONT = '150px Roboto';
+    const DEFAULT_NUMBER_FILL_STYLE = '#FFFFFF';
+
+    ///
+    const CLUE_NUMBER_POS = [110, 130];
+    const CLUE_NUMBER_SCALE = [3.8 * 0.3, 2 * 0.3, 1 * 0.3];
+    const CLUE_NUMBER_FONT = '150px Roboto';
+    const CLUE_NUMBER_FILL_STYLE = '#FFFFFF';
+    //
+    const VALUE_NUMBER_POS = [110, 130];
+    const VALUE_NUMBER_SCALE = [3.8 * 0.7, 2 * 0.7, 1 * 0.7];
+    const VALUE_NUMBER_FONT = '150px Roboto';
+    const VALUE_NUMBER_FILL_STYLE = '#FFFFFF';
+    ///
     const cubeWidth = 0.7;
 
     const CUBE_3D_WIDTH = 0.7;
@@ -139,9 +155,9 @@ export function createCell(number, cordinate) {
         //plane
         const geometryPlane = new THREE.PlaneGeometry(2, 2);
         const materialPlane = new THREE.MeshBasicMaterial({
-            color: 0x999999,
+            color: 0xffffff,
             side: THREE.DoubleSide,
-            opacity: 0.1,
+            opacity: 0.2,
             transparent: true,
             depthTest: false,
         });
@@ -168,23 +184,28 @@ export function createCell(number, cordinate) {
     }
 
     function createSprite(number) {
-        //Tạo một sprite để hiển thị số
+        //create sprite
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        context.font = '150px Roboto';
-        context.fillStyle = 'white';
-        context.fillText(number || '', 110, 130);
-
+        context.font = DEFAULT_NUMBER_FONT;
+        context.fillStyle = DEFAULT_NUMBER_FILL_STYLE;
+        context.fillText(number || '', DEFAULT_NUMBER_POS[0], DEFAULT_NUMBER_POS[1]);
+        //
         const texture = new THREE.CanvasTexture(canvas);
         const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
         const sprite = new THREE.Sprite(spriteMaterial);
-        sprite.scale.set(3.8, 2, 1); // Điều chỉnh kích thước sprite cho phù hợp
-
+        sprite.scale.set(DEFAULT_NUMBER_SCALE[0], DEFAULT_NUMBER_SCALE[1], DEFAULT_NUMBER_SCALE[2]); // Điều chỉnh kích thước sprite cho phù hợp
         sprite.userData = {
             type: 'Sprite',
             number: number === undefined ? undefined : number,
+            playerNumber:
+                number === undefined
+                    ? {
+                          clue: [],
+                          number: undefined,
+                      }
+                    : undefined,
         };
-
         return sprite;
     }
 
@@ -235,7 +256,13 @@ export function createCell(number, cordinate) {
         // console.log(viewType);
         if (viewType === '3D') {
             cell.visible = true;
-            const isHaveNumber = cell.children.some((object) => object.userData.type === 'Sprite' && object.userData.number);
+            const isHaveNumber = cell.children.some(
+                (object) =>
+                    object.userData.type === 'Sprite' &&
+                    (object.userData.number ||
+                        object.userData.playerNumber.number ||
+                        object.userData.playerNumber.clue.length > 0),
+            );
             if (isHaveNumber) {
                 cell.children.forEach((object) => {
                     if (object.userData.type === 'Sprite' || object.userData.type === '3D' || object.type === 'Mesh') {
@@ -275,81 +302,123 @@ export function createCell(number, cordinate) {
                     }
                 }
             });
-
-            // cell.children.forEach((object) => {
-            //     switch (viewType) {
-            //         case 'X':
-            //             if (object.userData.type === 'X') {
-            //                 object.visible = true;
-            //                 selectedCell.map((cell_) => {
-            //                     if (cell_.cellId === cell.id) {
-            //                         object.children.forEach((c) => {
-            //                             if (c.userData.type === 'Selection') {
-            //                                 c.visible = true;
-            //                             }
-            //                         });
-            //                     }
-            //                 });
-            //             } else {
-            //                 if (object.userData.type === 'Sprite') {
-            //                     object.visible = true;
-            //                 } else {
-            //                     object.visible = false;
-            //                 }
-            //             }
-            //             break;
-            //         case 'Y':
-            //             if (object.userData.type === 'Y' && object.type === 'Group') {
-            //                 object.visible = true;
-            //                 selectedCell.map((cell_) => {
-            //                     if (cell_.cellId === cell.id) {
-            //                         object.children.forEach((c) => {
-            //                             if (c.userData.type === 'Selection') {
-            //                                 c.visible = true;
-            //                             }
-            //                         });
-            //                     }
-            //                 });
-            //             } else {
-            //                 if (object.userData.type === 'Sprite') {
-            //                     object.visible = true;
-            //                 } else {
-            //                     object.visible = false;
-            //                 }
-            //             }
-            //             break;
-            //         case 'Z':
-            //             if (object.userData.type === 'Z') {
-            //                 object.visible = true;
-            //                 selectedCell.map((cell_) => {
-            //                     if (cell_.cellId === cell.id) {
-            //                         object.children.forEach((c) => {
-            //                             if (c.userData.type === 'Selection') {
-            //                                 c.visible = true;
-            //                             }
-            //                         });
-            //                     }
-            //                 });
-            //             } else {
-            //                 if (object.userData.type === 'Sprite') {
-            //                     object.visible = true;
-            //                 } else {
-            //                     object.visible = false;
-            //                 }
-            //             }
-            //             break;
-            //         case 'None':
-            //             object.visible = false;
-            //             break;
-            //         default:
-            //             break;
-            //     }
-            // });
         }
+    }
+
+    /**
+     * @param {string} number
+     * @param {"clue" | "value"} type
+     */
+    function setNumber(number, type) {
+        if (type === 'clue' || type === 'value') {
+            cell.children.forEach((child) => {
+                if (child.userData.type === 'Sprite' && child.userData.number === undefined) {
+                    if (type === 'clue') {
+                        if (!child.userData.playerNumber.number) {
+                            const currentClue = [...child.userData.playerNumber.clue];
+
+                            // set obj userData
+                            const index = currentClue.indexOf(number);
+                            if (index === -1) {
+                                currentClue.push(number);
+                                currentClue.sort((a, b) => a - b);
+                            } else {
+                                currentClue.splice(index, 1);
+                            }
+                            child.userData.playerNumber.clue = [...currentClue];
+                            //
+                            // set obj attribute
+                            const canvas = child.material.map.image;
+                            const context = canvas.getContext('2d');
+
+                            // Xóa nội dung cũ trên canvas
+                            context.clearRect(0, 0, canvas.width, canvas.height);
+
+                            // Vẽ số mới lên canvas
+                            context.font = CLUE_NUMBER_FONT;
+                            context.fillStyle = CLUE_NUMBER_FILL_STYLE;
+                            context.fillText(currentClue.join(''), CLUE_NUMBER_POS[0], CLUE_NUMBER_POS[1]);
+
+                            // Cập nhật texture của sprite để phản ánh thay đổi
+                            child.material.map.needsUpdate = true;
+
+                            child.scale.set(CLUE_NUMBER_SCALE[0], CLUE_NUMBER_SCALE[1], CLUE_NUMBER_SCALE[2]);
+                        }
+                    } else {
+                        // set obj userData
+                        child.userData.playerNumber.number = number;
+                        // set obj attribute
+                        const canvas = child.material.map.image;
+                        const context = canvas.getContext('2d');
+
+                        context.clearRect(0, 0, canvas.width, canvas.height);
+
+                        context.font = VALUE_NUMBER_FONT;
+                        context.fillStyle = VALUE_NUMBER_FILL_STYLE;
+                        context.fillText(number, VALUE_NUMBER_POS[0], VALUE_NUMBER_POS[1]);
+                        child.scale.set(VALUE_NUMBER_SCALE[0], VALUE_NUMBER_SCALE[1], VALUE_NUMBER_SCALE[2]);
+
+                        child.material.map.needsUpdate = true;
+                    }
+                }
+            });
+        } else {
+            throw new Error('Invalid type. Type must be either "clue" or "value".');
+        }
+    }
+
+    /**
+     *
+     * @param {"clue" | "value"} type
+     */
+    function getData(type) {
+        if (type === 'clue' || type === 'value') {
+        } else {
+            throw new Error('Invalid type. Type must be either "clue" or "value".');
+        }
+    }
+
+    function clearNumber() {
+        cell.children.forEach((child) => {
+            if (child.userData.type === 'Sprite' && child.userData.playerNumber) {
+                if (child.userData.playerNumber.number) {
+                    child.userData.playerNumber.number = undefined;
+                    //
+                    const num = [...child.userData.playerNumber.clue];
+                    //
+                    const canvas = child.material.map.image;
+                    const context = canvas.getContext('2d');
+
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+
+                    context.font = CLUE_NUMBER_FONT;
+                    context.fillStyle = CLUE_NUMBER_FILL_STYLE;
+                    context.fillText(num.join(''), CLUE_NUMBER_POS[0], CLUE_NUMBER_POS[1]);
+
+                    child.material.map.needsUpdate = true;
+                } else {
+                    child.userData.playerNumber.clue = [];
+                    //
+                    const canvas = child.material.map.image;
+                    const context = canvas.getContext('2d');
+
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+
+                    context.font = DEFAULT_NUMBER_FONT;
+                    context.fillStyle = DEFAULT_NUMBER_FILL_STYLE;
+                    context.fillText('', DEFAULT_NUMBER_POS[0], DEFAULT_NUMBER_POS[1]);
+
+                    child.material.map.needsUpdate = true;
+                    child.visible = false;
+                }
+            }
+        });
     }
 
     return {
         cell,
         switchView,
+        setNumber,
+        clearNumber,
     };
 }

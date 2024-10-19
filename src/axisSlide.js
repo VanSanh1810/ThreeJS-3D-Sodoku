@@ -13,8 +13,8 @@ export function createAxis() {
     const Z_DECREASE = 'z';
     // Track cordinate
     const X_TRACK = [
-        [0, 16, -OFFSET],
-        [16, 16, -OFFSET],
+        [0, 18, -OFFSET],
+        [16, 18, -OFFSET],
     ];
     const Y_TRACK = [
         [-OFFSET, 0, -OFFSET],
@@ -61,6 +61,11 @@ export function createAxis() {
         const geometryTrack = new THREE.BufferGeometry().setFromPoints([...points]);
         const track = new THREE.Line(geometryTrack, materialTrack);
 
+        slider.userData = {
+            type: 'Slider',
+            axis: 'X',
+        };
+
         slider.add(...[track, handle]);
 
         return slider;
@@ -84,6 +89,11 @@ export function createAxis() {
 
         slider.add(...[track, handle]);
 
+        slider.userData = {
+            type: 'Slider',
+            axis: 'Y',
+        };
+
         return slider;
     }
 
@@ -104,6 +114,11 @@ export function createAxis() {
         const track = new THREE.Line(geometryTrack, materialTrack);
 
         slider.add(...[track, handle]);
+
+        slider.userData = {
+            type: 'Slider',
+            axis: 'Z',
+        };
 
         return slider;
     }

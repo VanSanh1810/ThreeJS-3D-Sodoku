@@ -97,14 +97,9 @@ export function createScene() {
             if (!event.ctrlKey) {
                 const AXIS_NAME = ['X', 'Y', 'Z'];
                 selectedCell.forEach((item) => {
-                    // const cellRef = sodokuObjList[item.cordinate.x][item.cordinate.y][item.cordinate.z].cell;
                     const cellRef = scene.getObjectById(item.cellId);
 
-                    //console.log(cellRef);
                     cellRef.children.forEach((group) => {
-                        // console.log(group);
-                        // console.log(group.userData?.type);
-                        // console.log(AXIS_NAME.indexOf(group.userData?.type));
                         if (group.userData?.type && AXIS_NAME.indexOf(group.userData.type) !== -1) {
                             group.children.map((o) => {
                                 if (o.userData.type === 'Selection') {
@@ -146,6 +141,7 @@ export function createScene() {
                                             return true;
                                         }
                                     });
+                                    flag = true;
                                 }
                                 break;
                             case 'Y':
@@ -168,6 +164,7 @@ export function createScene() {
                                             return true;
                                         }
                                     });
+                                    flag = true;
                                 }
                                 break;
                             case 'Z':
@@ -190,6 +187,7 @@ export function createScene() {
                                             return true;
                                         }
                                     });
+                                    flag = true;
                                 }
                                 break;
                         }
@@ -202,21 +200,6 @@ export function createScene() {
             if (intersections[0].object.userData.cellId) {
                 console.log(intersections[0].object.userData.data.cordinate);
                 console.log(intersections[0].object.userData.cellId);
-                // const detectedId = intersections[0].object.userData.cellId;
-                // if (selectedObj) {
-                //     scene.getObjectById(selectedObj).children.forEach((child) => {
-                //         if (child.type === 'Line') {
-                //             child.material.color.set(0x555555);
-                //         } else {
-                //             child.material.color.set(0xffffff);
-                //         }
-                //     });
-                // }
-                // console.log(scene.getObjectById(detectedId));
-                // selectedObj = detectedId;
-                // scene.getObjectById(selectedObj).children.forEach((child) => {
-                //     child.material.color.set(0xff0000);
-                // });
             }
         } else {
             // select nothing
@@ -294,7 +277,26 @@ export function createScene() {
         console.log(event.key);
         axis.slideAction(event.key.toLowerCase(), gameUpdateAxis);
 
-        // gameUpdateAxis();
+        try {
+            const number = parseInt(event.key);
+            if (number === 0 || isNaN(number)) {
+                return;
+            }
+            selectedCell.forEach((cell_) => {
+                sodokuObjList[cell_.cordinate.x][cell_.cordinate.y][cell_.cordinate.z].setNumber(number, true ? 'value' : 'clue');
+            });
+        } catch (e) {
+            return;
+        }
+    }
+
+    function onKeyDown(event) {
+        console.log(event);
+        console.log(Math.random());
+    }
+
+    function onKeyUp(event) {
+        // console.log(event.altKey);
     }
 
     function switchTo3D() {
@@ -302,14 +304,24 @@ export function createScene() {
         if (curAxis.currentAxisSelected) {
             axis.resetCurrentSelect(gameUpdateAxis);
         }
+        camera.set3DView();
     }
 
     function switchTo2D() {
-
+        const curAxis = axis.getAxisData();
+        if (curAxis.currentAxisSelected) {
+            camera.set2DView(curAxis.currentAxisSelected);
+        }
     }
 
-    //game update view
-    function gameUpdateNumber() {}
+    function clearCell() {
+        const axisData = axis.getAxisData();
+        if (selectedCell.length > 0 && axisData.currentAxisSelected) {
+            selectedCell.forEach((_cell) => {
+                sodokuObjList[_cell.cordinate.x][_cell.cordinate.y][_cell.cordinate.z].clearNumber();
+            });
+        }
+    }
 
     return {
         start,
@@ -320,5 +332,8 @@ export function createScene() {
         onKeyPress,
         switchTo3D,
         switchTo2D,
+        onKeyDown,
+        onKeyUp,
+        clearCell,
     };
 }

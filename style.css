@@ -15,7 +15,8 @@ body {
 #ui-container {
     position: absolute;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: start;
     align-items: start;
     height: 100vh;
 }
