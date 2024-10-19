@@ -26,7 +26,7 @@ export function createCamera(gameWindow) {
     let preMouseX = 0;
     let preMouseY = 0;
 
-    const camera = new THREE.PerspectiveCamera(75, gameWindow.offsetWidth / gameWindow.offsetHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(70, gameWindow.offsetWidth / gameWindow.offsetHeight, 0.1, 1000);
     camera.layers.set(0);
 
     updateCameraPosition();

@@ -11,3 +11,22 @@ body {
 #render-target {
     height: 100%;
 }
+
+#ui-container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    height: 100vh;
+}
+
+.ui-btn {
+    cursor: pointer;
+    background: none;
+    border: none;
+    border: 1px solid #ffffff;
+    padding: 10px 20px;
+    margin: 20px;
+    color: #ffffff;
+    border-radius: 6px;
+}

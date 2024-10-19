@@ -139,7 +139,7 @@ export function createCell(number, cordinate) {
         //plane
         const geometryPlane = new THREE.PlaneGeometry(2, 2);
         const materialPlane = new THREE.MeshBasicMaterial({
-            color: 0x777777,
+            color: 0x999999,
             side: THREE.DoubleSide,
             opacity: 0.1,
             transparent: true,
@@ -182,7 +182,7 @@ export function createCell(number, cordinate) {
 
         sprite.userData = {
             type: 'Sprite',
-            number: number || '',
+            number: number === undefined ? undefined : number,
         };
 
         return sprite;
@@ -232,88 +232,120 @@ export function createCell(number, cordinate) {
     // Switch view
     function switchView(viewType, selectedCell) {
         // X Y Z 3D None
-        cell.children.forEach((object, i) => {
-            switch (viewType) {
-                case 'X':
-                    if (object.userData.type === 'X') {
-                        object.visible = true;
-                        selectedCell.map((cell_) => {
-                            if (cell_.cellId === cell.id) {
-                                object.children.forEach((c) => {
-                                    if (c.userData.type === 'Selection') {
-                                        c.visible = true;
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        if (object.userData.type === 'Sprite' && object.userData.number) {
-                            object.visible = true;
-                        } else {
-                            object.visible = false;
-                        }
-                    }
-                    break;
-                case 'Y':
-                    if (object.userData.type === 'Y' && object.type === 'Group') {
-                        object.visible = true;
-                        selectedCell.map((cell_) => {
-                            if (cell_.cellId === cell.id) {
-                                object.children.forEach((c) => {
-                                    if (c.userData.type === 'Selection') {
-                                        c.visible = true;
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        if (object.userData.type === 'Sprite' && object.userData.number) {
-                            object.visible = true;
-                        } else {
-                            object.visible = false;
-                        }
-                    }
-                    break;
-                case 'Z':
-                    if (object.userData.type === 'Z') {
-                        object.visible = true;
-                        selectedCell.map((cell_) => {
-                            if (cell_.cellId === cell.id) {
-                                object.children.forEach((c) => {
-                                    if (c.userData.type === 'Selection') {
-                                        c.visible = true;
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        if (object.userData.type === 'Sprite' && object.userData.number) {
-                            object.visible = true;
-                        } else {
-                            object.visible = false;
-                        }
-                    }
-                    break;
-                case '3D':
-                    //fix hear
-                    if (object.userData.type === '3D') {
+        // console.log(viewType);
+        if (viewType === '3D') {
+            cell.visible = true;
+            const isHaveNumber = cell.children.some((object) => object.userData.type === 'Sprite' && object.userData.number);
+            if (isHaveNumber) {
+                cell.children.forEach((object) => {
+                    if (object.userData.type === 'Sprite' || object.userData.type === '3D' || object.type === 'Mesh') {
                         object.visible = true;
                     } else {
-                        if (object.userData.type === 'Sprite' && object.userData.number) {
-                            object.visible = true;
-                        } else {
-                            object.visible = false;
-                        }
+                        object.visible = false;
                     }
-                    break;
-                case 'None':
-                    object.visible = false;
-                    break;
-                default:
-                    break;
+                });
+            } else {
+                cell.visible = false;
             }
-        });
-        // cell.updateMatrix();
+        } else if (viewType === 'None') {
+            cell.visible = false;
+        } else {
+            // X Y Z
+            // console.log(cell);
+            cell.visible = true;
+            cell.children.forEach((object) => {
+                if (object.userData.type === viewType) {
+                    object.visible = true; // show outline for viewtype
+
+                    // show selection
+                    selectedCell.map((cell_) => {
+                        if (cell_.cellId === cell.id) {
+                            object.children.forEach((c) => {
+                                if (c.userData.type === 'Selection') {
+                                    c.visible = true;
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    if (object.userData.type === 'Sprite') {
+                        object.visible = true;
+                    } else {
+                        object.visible = false;
+                    }
+                }
+            });
+
+            // cell.children.forEach((object) => {
+            //     switch (viewType) {
+            //         case 'X':
+            //             if (object.userData.type === 'X') {
+            //                 object.visible = true;
+            //                 selectedCell.map((cell_) => {
+            //                     if (cell_.cellId === cell.id) {
+            //                         object.children.forEach((c) => {
+            //                             if (c.userData.type === 'Selection') {
+            //                                 c.visible = true;
+            //                             }
+            //                         });
+            //                     }
+            //                 });
+            //             } else {
+            //                 if (object.userData.type === 'Sprite') {
+            //                     object.visible = true;
+            //                 } else {
+            //                     object.visible = false;
+            //                 }
+            //             }
+            //             break;
+            //         case 'Y':
+            //             if (object.userData.type === 'Y' && object.type === 'Group') {
+            //                 object.visible = true;
+            //                 selectedCell.map((cell_) => {
+            //                     if (cell_.cellId === cell.id) {
+            //                         object.children.forEach((c) => {
+            //                             if (c.userData.type === 'Selection') {
+            //                                 c.visible = true;
+            //                             }
+            //                         });
+            //                     }
+            //                 });
+            //             } else {
+            //                 if (object.userData.type === 'Sprite') {
+            //                     object.visible = true;
+            //                 } else {
+            //                     object.visible = false;
+            //                 }
+            //             }
+            //             break;
+            //         case 'Z':
+            //             if (object.userData.type === 'Z') {
+            //                 object.visible = true;
+            //                 selectedCell.map((cell_) => {
+            //                     if (cell_.cellId === cell.id) {
+            //                         object.children.forEach((c) => {
+            //                             if (c.userData.type === 'Selection') {
+            //                                 c.visible = true;
+            //                             }
+            //                         });
+            //                     }
+            //                 });
+            //             } else {
+            //                 if (object.userData.type === 'Sprite') {
+            //                     object.visible = true;
+            //                 } else {
+            //                     object.visible = false;
+            //                 }
+            //             }
+            //             break;
+            //         case 'None':
+            //             object.visible = false;
+            //             break;
+            //         default:
+            //             break;
+            //     }
+            // });
+        }
     }
 
     return {

@@ -27,22 +27,22 @@ export function createScene() {
     //cordinate
     //}
     //
-    const pointsX = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 0, 0)];
-    const pointsY = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 100, 0)];
-    const pointsZ = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 100)];
-    const materialX = new THREE.LineBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-    const materialY = new THREE.LineBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
-    const materialZ = new THREE.LineBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
-    const geometryX = new THREE.BufferGeometry().setFromPoints(pointsX);
-    const geometryY = new THREE.BufferGeometry().setFromPoints(pointsY);
-    const geometryZ = new THREE.BufferGeometry().setFromPoints(pointsZ);
-    const lineX = new THREE.Line(geometryX, materialX);
-    const lineY = new THREE.Line(geometryY, materialY);
-    const lineZ = new THREE.Line(geometryZ, materialZ);
-    const box = new THREE.Box3().setFromObject(lineX);
-    const size = new THREE.Vector3();
-    box.getSize(size);
-    console.log('Bounding linex box size:', size);
+    // const pointsX = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 0, 0)];
+    // const pointsY = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 100, 0)];
+    // const pointsZ = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 100)];
+    // const materialX = new THREE.LineBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+    // const materialY = new THREE.LineBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+    // const materialZ = new THREE.LineBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
+    // const geometryX = new THREE.BufferGeometry().setFromPoints(pointsX);
+    // const geometryY = new THREE.BufferGeometry().setFromPoints(pointsY);
+    // const geometryZ = new THREE.BufferGeometry().setFromPoints(pointsZ);
+    // const lineX = new THREE.Line(geometryX, materialX);
+    // const lineY = new THREE.Line(geometryY, materialY);
+    // const lineZ = new THREE.Line(geometryZ, materialZ);
+    // const box = new THREE.Box3().setFromObject(lineX);
+    // const size = new THREE.Vector3();
+    // box.getSize(size);
+    // console.log('Bounding linex box size:', size);
     //scene.add(...[lineX, lineY, lineZ]);
     // add slider
     const axis = createAxis();
@@ -252,15 +252,10 @@ export function createScene() {
     //game update view
     function gameUpdateAxis() {
         const axisData = axis.getAxisData();
-        console.log(axisData);
+        // console.log(axisData);
         for (let x = 0; x < 9; x++) {
             for (let y = 0; y < 9; y++) {
                 for (let z = 0; z < 9; z++) {
-                    // console.log(sodokuObjList[x][y][z].cell);
-                    // console.log(axis.getAxisData().currentAxisSelected);
-                    // console.log(axis.getAxisData().corTrackX);
-                    // console.log(axis.getAxisData().corTrackY);
-                    // console.log(axis.getAxisData().corTrackZ);
                     switch (axisData.currentAxisSelected) {
                         case 'X':
                             if (x === axisData.corTrackX) {
@@ -302,6 +297,17 @@ export function createScene() {
         // gameUpdateAxis();
     }
 
+    function switchTo3D() {
+        const curAxis = axis.getAxisData();
+        if (curAxis.currentAxisSelected) {
+            axis.resetCurrentSelect(gameUpdateAxis);
+        }
+    }
+
+    function switchTo2D() {
+
+    }
+
     //game update view
     function gameUpdateNumber() {}
 
@@ -312,5 +318,7 @@ export function createScene() {
         onMouseUp,
         onMouseMove,
         onKeyPress,
+        switchTo3D,
+        switchTo2D,
     };
 }

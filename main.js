@@ -12,4 +12,9 @@ window.onload = () => {
         event.preventDefault(); // Ngăn hành vi mặc định của context menu
     });
     scene.start();
+
+    const view3DButton = document.getElementById('btn3D');
+    const view2DButton = document.getElementById('btn2D');
+    view3DButton.addEventListener('click', scene.switchTo3D, false);
+    view2DButton.addEventListener('click', scene.switchTo2D, false);
 };
