@@ -141,7 +141,7 @@ export function createCell(number, cordinate) {
         const materialPlane = new THREE.MeshBasicMaterial({
             color: 0x777777,
             side: THREE.DoubleSide,
-            opacity: 0.2,
+            opacity: 0.1,
             transparent: true,
             depthTest: false,
         });
@@ -150,6 +150,8 @@ export function createCell(number, cordinate) {
             type: 'Selection',
         };
         cube.add(plane);
+
+        plane.visible = false;
 
         switch (orientation) {
             case 'X':
@@ -228,13 +230,22 @@ export function createCell(number, cordinate) {
     }
 
     // Switch view
-    function switchView(viewType) {
+    function switchView(viewType, selectedCell) {
         // X Y Z 3D None
         cell.children.forEach((object, i) => {
             switch (viewType) {
                 case 'X':
                     if (object.userData.type === 'X') {
                         object.visible = true;
+                        selectedCell.map((cell_) => {
+                            if (cell_.cellId === cell.id) {
+                                object.children.forEach((c) => {
+                                    if (c.userData.type === 'Selection') {
+                                        c.visible = true;
+                                    }
+                                });
+                            }
+                        });
                     } else {
                         if (object.userData.type === 'Sprite' && object.userData.number) {
                             object.visible = true;
@@ -246,6 +257,15 @@ export function createCell(number, cordinate) {
                 case 'Y':
                     if (object.userData.type === 'Y' && object.type === 'Group') {
                         object.visible = true;
+                        selectedCell.map((cell_) => {
+                            if (cell_.cellId === cell.id) {
+                                object.children.forEach((c) => {
+                                    if (c.userData.type === 'Selection') {
+                                        c.visible = true;
+                                    }
+                                });
+                            }
+                        });
                     } else {
                         if (object.userData.type === 'Sprite' && object.userData.number) {
                             object.visible = true;
@@ -257,6 +277,15 @@ export function createCell(number, cordinate) {
                 case 'Z':
                     if (object.userData.type === 'Z') {
                         object.visible = true;
+                        selectedCell.map((cell_) => {
+                            if (cell_.cellId === cell.id) {
+                                object.children.forEach((c) => {
+                                    if (c.userData.type === 'Selection') {
+                                        c.visible = true;
+                                    }
+                                });
+                            }
+                        });
                     } else {
                         if (object.userData.type === 'Sprite' && object.userData.number) {
                             object.visible = true;

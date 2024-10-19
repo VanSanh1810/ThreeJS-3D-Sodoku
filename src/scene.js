@@ -21,7 +21,11 @@ export function createScene() {
     const raycaster = new THREE.Raycaster();
     raycaster.layers.set(1);
     const mouse = new THREE.Vector2();
-    let selectedObj = undefined;
+    //
+    let selectedCell = [];
+    //{cellId: string,
+    //cordinate
+    //}
     //
     const pointsX = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 0, 0)];
     const pointsY = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 100, 0)];
@@ -91,6 +95,105 @@ export function createScene() {
         // selecting object
         if (intersections.length > 0 && intersections[0].object) {
             // box select
+            const axisData = axis.getAxisData();
+            if (axisData.currentAxisSelected) {
+                for (let i = 0; i < intersections.length; i++) {
+                    let flag = false;
+                    const obj = intersections[i].object;
+                    if (obj.userData.cellId) {
+                        console.log(obj);
+                        switch (axisData.currentAxisSelected) {
+                            case 'X':
+                                if (obj.userData.data?.cordinate?.x === axisData.corTrackX) {
+                                    obj.parent.children.some((o) => {
+                                        if (o.userData.type === 'X') {
+                                            o.children.some((t) => {
+                                                if (t.userData.type === 'Selection') {
+                                                    if (!event.ctrlKey) {
+                                                        selectedCell.forEach((item) => {
+                                                            item.selectionRef.visible = false;
+                                                        });
+                                                        selectedCell = [];
+                                                    }
+                                                    t.visible = true;
+                                                    if (!selectedCell.some((c) => c.cellId === obj.userData.cellId)) {
+                                                        selectedCell.push({
+                                                            cellId: obj.userData.cellId,
+                                                            cordinate: obj.userData.data.cordinate,
+                                                            selectionRef: t,
+                                                        });
+                                                    }
+                                                    return true;
+                                                }
+                                            });
+                                            return true;
+                                        }
+                                    });
+                                }
+                                break;
+                            case 'Y':
+                                if (obj.userData.data?.cordinate?.y === axisData.corTrackY) {
+                                    obj.parent.children.some((o) => {
+                                        if (o.userData.type === 'Y') {
+                                            o.children.some((t) => {
+                                                if (t.userData.type === 'Selection') {
+                                                    if (!event.ctrlKey) {
+                                                        selectedCell.forEach((item) => {
+                                                            item.selectionRef.visible = false;
+                                                        });
+                                                        selectedCell = [];
+                                                    }
+                                                    t.visible = true;
+                                                    if (!selectedCell.some((c) => c.cellId === obj.userData.cellId)) {
+                                                        selectedCell.push({
+                                                            cellId: obj.userData.cellId,
+                                                            cordinate: obj.userData.data.cordinate,
+                                                            selectionRef: t,
+                                                        });
+                                                    }
+                                                    return true;
+                                                }
+                                            });
+                                            return true;
+                                        }
+                                    });
+                                }
+                                break;
+                            case 'Z':
+                                if (obj.userData.data?.cordinate?.z === axisData.corTrackZ) {
+                                    obj.parent.children.some((o) => {
+                                        if (o.userData.type === 'Z') {
+                                            o.children.some((t) => {
+                                                if (t.userData.type === 'Selection') {
+                                                    if (!event.ctrlKey) {
+                                                        selectedCell.forEach((item) => {
+                                                            item.selectionRef.visible = false;
+                                                        });
+                                                        selectedCell = [];
+                                                    }
+                                                    t.visible = true;
+                                                    if (!selectedCell.some((c) => c.cellId === obj.userData.cellId)) {
+                                                        selectedCell.push({
+                                                            cellId: obj.userData.cellId,
+                                                            cordinate: obj.userData.data.cordinate,
+                                                            selectionRef: t,
+                                                        });
+                                                    }
+                                                    return true;
+                                                }
+                                            });
+                                            return true;
+                                        }
+                                    });
+                                }
+                                break;
+                        }
+                    }
+                    if (flag) {
+                        break;
+                    }
+                }
+            }
             if (intersections[0].object.userData.cellId) {
                 console.log(intersections[0].object.userData.data.cordinate);
                 console.log(intersections[0].object.userData.cellId);
@@ -156,21 +259,21 @@ export function createScene() {
                     switch (axisData.currentAxisSelected) {
                         case 'X':
                             if (x === axisData.corTrackX) {
-                                sodokuObjList[x][y][z].switchView(axisData.currentAxisSelected);
+                                sodokuObjList[x][y][z].switchView(axisData.currentAxisSelected, selectedCell);
                             } else {
                                 sodokuObjList[x][y][z].switchView('None');
                             }
                             break;
                         case 'Y':
                             if (y === axisData.corTrackY) {
-                                sodokuObjList[x][y][z].switchView(axisData.currentAxisSelected);
+                                sodokuObjList[x][y][z].switchView(axisData.currentAxisSelected, selectedCell);
                             } else {
                                 sodokuObjList[x][y][z].switchView('None');
                             }
                             break;
                         case 'Z':
                             if (z === axisData.corTrackZ) {
-                                sodokuObjList[x][y][z].switchView(axisData.currentAxisSelected);
+                                sodokuObjList[x][y][z].switchView(axisData.currentAxisSelected, selectedCell);
                             } else {
                                 sodokuObjList[x][y][z].switchView('None');
                             }
@@ -188,7 +291,7 @@ export function createScene() {
 
     //controll slider
     function onKeyPress(event) {
-        // console.log(event.key);
+        console.log(event.key);
         axis.slideAction(event.key.toLowerCase(), gameUpdateAxis);
 
         // gameUpdateAxis();
