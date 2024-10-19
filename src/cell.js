@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { findNearestCenter } from './helper/findNearestCenter';
 
 export function createCell(number, cordinate) {
     const cubeWidth = 0.7;
@@ -57,6 +58,20 @@ export function createCell(number, cordinate) {
     }
 
     function create2dFrameGroup(orientation) {
+        function setLineWidth(cor1, cor2, center) {
+            const _dif1 = cor1 - center[0];
+            const _dif2 = cor2 - center[1];
+
+            const boldSideTable = [
+                [[1, 2], [1], [0, 1]],
+                [[2], [], [0]],
+                [[3, 2], [3], [0, 3]],
+            ];
+
+            return boldSideTable[_dif2 + 1][_dif1 + 1];
+        }
+        let boldEdge = [];
+        let centerCor = [];
         //Create 2d frame by orientation
         let vertices = [];
         switch (orientation) {
@@ -67,6 +82,8 @@ export function createCell(number, cordinate) {
                     [0, -1, -1],
                     [0, -1, 1],
                 ];
+                centerCor = findNearestCenter(cordinate.y, cordinate.z);
+                boldEdge = setLineWidth(cordinate.y, cordinate.z, centerCor);
                 break;
             case 'Y':
                 vertices = [
@@ -75,6 +92,8 @@ export function createCell(number, cordinate) {
                     [-1, 0, -1],
                     [-1, 0, 1],
                 ];
+                centerCor = findNearestCenter(cordinate.x, cordinate.z);
+                boldEdge = setLineWidth(cordinate.x, cordinate.z, centerCor);
                 break;
             case 'Z':
                 vertices = [
@@ -83,6 +102,8 @@ export function createCell(number, cordinate) {
                     [-1, -1, 0],
                     [-1, 1, 0],
                 ];
+                centerCor = findNearestCenter(cordinate.x, cordinate.y);
+                boldEdge = setLineWidth(cordinate.x, cordinate.y, centerCor);
                 break;
         }
 
@@ -95,13 +116,17 @@ export function createCell(number, cordinate) {
 
         const cube = new THREE.Group();
 
-        edges.forEach((edge) => {
+        edges.forEach((edge, i) => {
             const [start, end] = edge;
 
             const points = [new THREE.Vector3(...vertices[start]), new THREE.Vector3(...vertices[end])];
             const material = new THREE.LineBasicMaterial({
-                color: orientation === 'X' ? 0xff0000 : orientation === 'Y' ? 0x00ff00 : 0x0000ff, // red green blue
+                color: orientation === 'X' ? 0x440000 : orientation === 'Y' ? 0x004400 : 0x000044, // red green blue
+                // color: 0,
             });
+            if (boldEdge.indexOf(i) !== -1) {
+                material.color.set(orientation === 'X' ? 0xff0000 : orientation === 'Y' ? 0x00ff00 : 0x0000ff);
+            }
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
             const line = new THREE.Line(geometry, material);
             cube.add(line);

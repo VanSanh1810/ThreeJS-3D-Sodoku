@@ -18,8 +18,8 @@ export function createCamera(gameWindow) {
 
     const cameraOrigin = new THREE.Vector3(8, 8, 8);
     let cameraRadius = (MIN_CAMERA_RADIUS + MAX_CAMERA_RADIUS) / 2;
-    let cameraAzimuth = -40;
-    let cameraElevation = 40;
+    let cameraAzimuth = -90;
+    let cameraElevation = 0;
     let isLeftMouseDown = false;
     let isRightMouseDown = false;
     let isMiddleMouseDown = false;
