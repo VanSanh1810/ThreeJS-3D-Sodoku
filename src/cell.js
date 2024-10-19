@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { findNearestCenter } from './helper/findNearestCenter';
+import { fillTextMultiline } from './helper/fillTextMultiline';
 
 export function createCell(number, cordinate) {
     const DEFAULT_NUMBER_POS = [110, 130];
@@ -8,9 +9,28 @@ export function createCell(number, cordinate) {
     const DEFAULT_NUMBER_FILL_STYLE = '#FFFFFF';
 
     ///
-    const CLUE_NUMBER_POS = [110, 130];
-    const CLUE_NUMBER_SCALE = [3.8 * 0.3, 2 * 0.3, 1 * 0.3];
-    const CLUE_NUMBER_FONT = '150px Roboto';
+    const CLUE_NUMBER_POS = [136, 97];
+    const CLUE_OFFSET_Y = [[0], [-20, 20], [-40, 0, 40]];
+    const CLUE_POS_MATRIX = [
+        //line.length i
+        [
+            [0, 0], // 1 item, row 1
+            [0, 0], // 1 item, row 2
+            [0, 0], // 1 item, row 3
+        ],
+        [
+            [-15, 0], // 2 item, row 1
+            [-15, 0], // 2 item, row 2
+            [-15, 0], // 2 item, row 3
+        ],
+        [
+            [-29, 0], // 3 item, row 1
+            [-29, 0], // 3 item, row 2
+            [-29, 0], // 3 item, row 3
+        ],
+    ];
+    const CLUE_NUMBER_SCALE = [3.8, 2, 1];
+    const CLUE_NUMBER_FONT = '50px Roboto';
     const CLUE_NUMBER_FILL_STYLE = '#FFFFFF';
     //
     const VALUE_NUMBER_POS = [110, 130];
@@ -337,7 +357,18 @@ export function createCell(number, cordinate) {
                             // Vẽ số mới lên canvas
                             context.font = CLUE_NUMBER_FONT;
                             context.fillStyle = CLUE_NUMBER_FILL_STYLE;
-                            context.fillText(currentClue.join(''), CLUE_NUMBER_POS[0], CLUE_NUMBER_POS[1]);
+                            const textLine = fillTextMultiline(currentClue);
+                            const rowCount = textLine.length;
+                            textLine.forEach((line, i) => {
+                                // i
+                                //line.length
+                                context.fillText(
+                                    line.join(''),
+                                    CLUE_NUMBER_POS[0] + CLUE_POS_MATRIX[line.length - 1][i][0],
+                                    CLUE_NUMBER_POS[1] + CLUE_POS_MATRIX[line.length - 1][i][1] + CLUE_OFFSET_Y[rowCount - 1][i],
+                                );
+                            });
+                            // context.fillText(currentClue.join(''), CLUE_NUMBER_POS[0], CLUE_NUMBER_POS[1]);
 
                             // Cập nhật texture của sprite để phản ánh thay đổi
                             child.material.map.needsUpdate = true;

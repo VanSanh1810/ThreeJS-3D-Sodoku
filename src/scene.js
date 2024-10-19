@@ -283,7 +283,10 @@ export function createScene() {
                 return;
             }
             selectedCell.forEach((cell_) => {
-                sodokuObjList[cell_.cordinate.x][cell_.cordinate.y][cell_.cordinate.z].setNumber(number, true ? 'value' : 'clue');
+                sodokuObjList[cell_.cordinate.x][cell_.cordinate.y][cell_.cordinate.z].setNumber(
+                    number,
+                    false ? 'value' : 'clue',
+                );
             });
         } catch (e) {
             return;
