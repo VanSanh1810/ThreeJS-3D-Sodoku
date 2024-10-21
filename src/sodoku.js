@@ -154,41 +154,54 @@ export async function createSodoku() {
 
     // console.log(shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9], 'aaaa'));
 
-    try {
-        while (true) {
-            count++;
-            if (_index === stack.length) {
-                break;
-            }
-            console.log(_index);
-            // console.log(stack[_index]);
-            const k = stack[_index].indexArrNumSelect;
-            if (k === 8) {
-                stack[_index].value = undefined;
-                stack[_index].indexArrNumSelect = -1;
-                _index--;
-                continue;
-            }
-            let isFound = false;
-            for (let i = k + 1; i < 9; i++) {
-                if (validateCell(stack[_index].cordinate, stack[_index].arrNumSelect[i])) {
-                    stack[_index].value = stack[_index].arrNumSelect[i];
-                    stack[_index].indexArrNumSelect = i;
-                    isFound = true;
-                    break;
-                }
-            }
-            if (isFound) {
-                _index++;
-            } else {
-                stack[_index].value = undefined;
-                stack[_index].indexArrNumSelect = -1;
-                _index--;
-            }
+    // try {
+    //     while (true) {
+    //         count++;
+    //         if (_index === stack.length) {
+    //             break;
+    //         }
+    //         console.log(_index);
+    //         // console.log(stack[_index]);
+    //         const k = stack[_index].indexArrNumSelect;
+    //         if (k === 8) {
+    //             stack[_index].value = undefined;
+    //             stack[_index].indexArrNumSelect = -1;
+    //             _index--;
+    //             continue;
+    //         }
+    //         let isFound = false;
+    //         for (let i = k + 1; i < 9; i++) {
+    //             if (validateCell(stack[_index].cordinate, stack[_index].arrNumSelect[i])) {
+    //                 stack[_index].value = stack[_index].arrNumSelect[i];
+    //                 stack[_index].indexArrNumSelect = i;
+    //                 isFound = true;
+    //                 break;
+    //             }
+    //         }
+    //         if (isFound) {
+    //             _index++;
+    //         } else {
+    //             stack[_index].value = undefined;
+    //             stack[_index].indexArrNumSelect = -1;
+    //             _index--;
+    //         }
+    //     }
+    // } catch (e) {
+    //     console.log(count);
+    // }
+
+    //729
+    WebAssembly.instantiateStreaming(fetch('wasm/add.wasm'), {}).then((result) => {
+        const strPtr = result.instance.exports.getArray(); // Lấy con trỏ đến chuỗi
+        const memory = new Uint8Array(result.instance.exports.memory.buffer);
+
+        // Chuyển đổi con trỏ thành chuỗi
+        let str = '';
+        for (let i = strPtr; memory[i] !== 0; i++) {
+            str += String.fromCharCode(memory[i]); // Chuyển đổi từng ký tự thành chuỗi
         }
-    } catch (e) {
-        console.log(count);
-    }
+        console.log(str); // In ra: "Hello, World!"
+    });
 
     return {
         sodokuBox,

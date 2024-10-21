@@ -25,5 +25,7 @@ dist-ssr
 
 node_modules
 
-/wasm
+public/wasm/*.js
+public/wasm/*.wasm
+public/wasm/*.txt
 test.js
