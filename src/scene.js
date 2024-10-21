@@ -5,7 +5,7 @@ import { create2DBox } from './2dbox';
 import { createSodoku } from './sodoku';
 import { createAxis } from './axisSlide';
 
-export function createScene() {
+export async function createScene() {
     const gameWindow = document.getElementById('render-target');
     const scene = new THREE.Scene();
 
@@ -54,7 +54,7 @@ export function createScene() {
     // scene.add(create2DBox('X').box2d);
     // scene.add(create2DBox('Y').box2d);
     // scene.add(create2DBox('Z').box2d);
-    const sodoku = createSodoku();
+    const sodoku = await createSodoku();
 
     const sodokuObjList = [];
 
@@ -93,7 +93,7 @@ export function createScene() {
 
         let intersections = raycaster.intersectObjects(scene.children, true);
         // selecting object
-        if (intersections.length > 0 && intersections[0].object) {
+        if (intersections.length > 0 && intersections[0].object && event.button === 0) {
             if (!event.ctrlKey) {
                 const AXIS_NAME = ['X', 'Y', 'Z'];
                 selectedCell.forEach((item) => {
@@ -287,6 +287,10 @@ export function createScene() {
                     number,
                     false ? 'value' : 'clue',
                 );
+                if (false && sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].value === undefined) {
+                    // add only value
+                    sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].userValue = number;
+                }
             });
         } catch (e) {
             return;
@@ -295,7 +299,6 @@ export function createScene() {
 
     function onKeyDown(event) {
         console.log(event);
-        console.log(Math.random());
     }
 
     function onKeyUp(event) {
@@ -322,6 +325,10 @@ export function createScene() {
         if (selectedCell.length > 0 && axisData.currentAxisSelected) {
             selectedCell.forEach((_cell) => {
                 sodokuObjList[_cell.cordinate.x][_cell.cordinate.y][_cell.cordinate.z].clearNumber();
+                if (sodoku.sodokuBox[_cell.cordinate.x][_cell.cordinate.x][_cell.cordinate.x].value === undefined) {
+                    // add only value
+                    sodoku.sodokuBox[_cell.cordinate.x][_cell.cordinate.x][_cell.cordinate.x].userValue = undefined;
+                }
             });
         }
     }

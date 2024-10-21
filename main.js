@@ -1,8 +1,8 @@
 import { createScene } from './src/scene';
 import './style.css';
 
-window.onload = () => {
-    const scene = createScene();
+window.onload = async () => {
+    const scene = await createScene();
     document.addEventListener('mousedown', scene.onMouseDown, false);
     document.addEventListener('mouseup', scene.onMouseUp, false);
     document.addEventListener('mousemove', scene.onMouseMove, false);
@@ -20,5 +20,12 @@ window.onload = () => {
     const clearCellButton = document.getElementById('btnClear');
     view3DButton.addEventListener('click', scene.switchTo3D, false);
     view2DButton.addEventListener('click', scene.switchTo2D, false);
-    clearCellButton.addEventListener('click', scene.clearCell, false);
+    //clearCellButton.addEventListener('click', scene.clearCell, false);
+    clearCellButton.addEventListener(
+        'click',
+        () => {
+            exports.test();
+        },
+        false,
+    );
 };
