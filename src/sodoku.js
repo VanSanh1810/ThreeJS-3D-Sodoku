@@ -191,8 +191,8 @@ export async function createSodoku() {
     // }
 
     //729
-    WebAssembly.instantiateStreaming(fetch('wasm/add.wasm'), {}).then((result) => {
-        const strPtr = result.instance.exports.getArray(); // Lấy con trỏ đến chuỗi
+    WebAssembly.instantiateStreaming(fetch('wasm/sodoku.wasm'), {}).then((result) => {
+        const strPtr = result.instance.exports.getSodoku(123); // Lấy con trỏ đến chuỗi
         const memory = new Uint8Array(result.instance.exports.memory.buffer);
 
         // Chuyển đổi con trỏ thành chuỗi
@@ -200,7 +200,7 @@ export async function createSodoku() {
         for (let i = strPtr; memory[i] !== 0; i++) {
             str += String.fromCharCode(memory[i]); // Chuyển đổi từng ký tự thành chuỗi
         }
-        console.log(str); // In ra: "Hello, World!"
+        console.log(str);
     });
 
     return {
