@@ -2,6 +2,7 @@
 #include <stdlib.h> // Thư viện cần thiết cho srand() và rand()
 #include <math.h>
 #include <stdbool.h>
+#include <string.h>
 
 struct Cordinate
 {
@@ -16,12 +17,18 @@ struct Cell
     int value;
     int arrNumSelect[9];
     int indexArrNumSelect;
+    bool checked;
 };
 
 // 729 and '\0'
+// Complete game map
 static char result[730];
+// Game map
+static char gameMap[730];
 
 static struct Cell stack[729];
+
+static int completeSodoku[9][9][9];
 
 int nona2Deca(int x, int y, int z)
 {
@@ -47,29 +54,6 @@ static int *shuffleArray(int seed)
     }
     return arr1;
 }
-
-// static int *findNearestCenter(int x, int y)
-// {
-//     static int arr[2];
-
-//     int rowCenter = (x / 3) * 3 + 1;
-//     int colCenter = (y / 3) * 3 + 1;
-
-//     // Nếu tọa độ (x, y) đã là trung tâm, trả về chính nó
-//     if (x == rowCenter && y == colCenter)
-//     {
-//         arr[0] = x;
-//         arr[1] = y;
-//     }
-//     else
-//     {
-//         // Trả về tọa độ trung tâm gần nhất
-//         arr[0] = rowCenter;
-//         arr[1] = colCenter;
-//     }
-
-//     return arr;
-// }
 
 bool validateCell(int _x, int _y, int _z, int number)
 {
@@ -141,9 +125,87 @@ bool validateCell(int _x, int _y, int _z, int number)
     } /// PASS
     return true;
 }
+//////////////////////////////////////////////////////
+
+// int selectValidRandomCell()
+// {
+//     int negative_indices[729];
+//     int neg_count = 0;
+
+//     for (int i = 0; i < 729; i++)
+//     {
+//         if (!stack[i].checked && stack[i].value != 0)
+//         {
+//             negative_indices[neg_count++] = i;
+//         }
+//     }
+
+//     if (neg_count == 0)
+//     {
+//         return -1;
+//     }
+
+//     srand(time(0));
+//     int random_index = rand() % neg_count;
+
+//     return negative_indices[random_index];
+// }
+
+// int selectNullCell()
+// {
+//     int negative_indices[729];
+//     int neg_count = 0;
+
+//     for (int i = 0; i < 729; i++)
+//     {
+//         if (!stack[i].checked && stack[i].value == 0)
+//         {
+//             negative_indices[neg_count++] = i;
+//         }
+//     }
+
+//     if (neg_count == 0)
+//     {
+//         return -1;
+//     }
+
+//     srand(time(0));
+//     int random_index = rand() % neg_count;
+
+//     return negative_indices[random_index];
+// }
+
+// bool isHaveOneSolution()
+// {
+//     int solution = 0;
+// }
+
+// void gradualDrop(int targetEmpty)
+// {
+//     int countCellDrop = 0;
+//     while (targetEmpty > countCellDrop)
+//     {
+//         int cellSelected = selectValidRandomCell();
+//         if (cellSelected == -1)
+//         {
+//             break;
+//         }
+//         int rollBackNum = stack[cellSelected].value;
+//         stack[cellSelected].value = 0;
+//         if (isHaveOneSolution())
+//         {
+//             countCellDrop++;
+//         }
+//         else
+//         {
+//             stack[cellSelected].value = rollBackNum;
+//             stack[cellSelected].checked = true;
+//         }
+//     }
+// }
 
 EMSCRIPTEN_KEEPALIVE
-char *getSodoku(int seed)
+char *getSodoku(int seed, int targetEmpty) // easy 100 cell , medium 200 cell, hard 400 cell
 {
     // init result
     for (int i = 0; i < 730; i++)
@@ -170,6 +232,7 @@ char *getSodoku(int seed)
                     stack[stackIndex].arrNumSelect[i] = selectionArr[i];
                 }
                 stack[stackIndex].indexArrNumSelect = -1;
+                stack[stackIndex].checked = false;
             }
         }
     }
@@ -215,9 +278,23 @@ char *getSodoku(int seed)
     for (int i = 0; i < 729; i++)
     {
         result[i] = stack[i].value + '0';
+        completeSodoku[stack[i].cordinate.x][stack[i].cordinate.y][stack[i].cordinate.z] = stack[i].value;
     }
 
     result[729] = '\0';
 
     return result;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int validatePuzzle(char *table)
+{
+    for (int i = 0; i < strlen(table); i++)
+    {
+        if (!validateCell(stack[i].cordinate.x, stack[i].cordinate.y, stack[i].cordinate.z, atoi(table[i])))
+        {
+            return -1;
+        }
+    }
+    return 1;
 }

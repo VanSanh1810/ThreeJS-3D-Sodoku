@@ -23,6 +23,7 @@ export async function createScene() {
     const mouse = new THREE.Vector2();
     //
     let selectedCell = [];
+    let isClue = true;
     //{cellId: string,
     //cordinate
     //}
@@ -56,6 +57,8 @@ export async function createScene() {
     // scene.add(create2DBox('Z').box2d);
     const sodoku = await createSodoku();
 
+    let emptyCountCell = 0;
+
     const sodokuObjList = [];
 
     for (let x = 0; x < 9; x++) {
@@ -64,6 +67,9 @@ export async function createScene() {
             const zCol = [];
             for (let z = 0; z < 9; z++) {
                 const cell = createCell(sodoku.sodokuBox[x][y][z].value, sodoku.sodokuBox[x][y][z].cordinate);
+                if (sodoku.sodokuBox[x][y][z].value) {
+                    emptyCountCell++;
+                }
                 zCol.push(cell);
                 scene.add(cell.cell);
             }
@@ -276,7 +282,7 @@ export async function createScene() {
     function onKeyPress(event) {
         console.log(event.key);
         axis.slideAction(event.key.toLowerCase(), gameUpdateAxis);
-
+        switchFillMode(event);
         try {
             const number = parseInt(event.key);
             if (number === 0 || isNaN(number)) {
@@ -285,11 +291,12 @@ export async function createScene() {
             selectedCell.forEach((cell_) => {
                 sodokuObjList[cell_.cordinate.x][cell_.cordinate.y][cell_.cordinate.z].setNumber(
                     number,
-                    false ? 'value' : 'clue',
+                    !isClue ? 'value' : 'clue',
                 );
-                if (false && sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].value === undefined) {
+                if (!isClue && sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].value === undefined) {
                     // add only value
                     sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].userValue = number;
+                    emptyCountCell--;
                 }
             });
         } catch (e) {
@@ -328,8 +335,17 @@ export async function createScene() {
                 if (sodoku.sodokuBox[_cell.cordinate.x][_cell.cordinate.x][_cell.cordinate.x].value === undefined) {
                     // add only value
                     sodoku.sodokuBox[_cell.cordinate.x][_cell.cordinate.x][_cell.cordinate.x].userValue = undefined;
+                    emptyCountCell++;
                 }
             });
+        }
+    }
+
+    function switchFillMode(event) {
+        if (event.key.toLowerCase() === 'p') {
+            isClue = !isClue;
+            const view = document.getElementById('fillMode');
+            view.innerHTML = isClue ? 'Mode: CLUE' : 'Mode: VALUE';
         }
     }
 

@@ -21,6 +21,10 @@ body {
     height: 100vh;
 }
 
+#fillMode {
+    color: #ffffff;
+}
+
 .ui-btn {
     cursor: pointer;
     background: none;

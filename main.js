@@ -20,12 +20,5 @@ window.onload = async () => {
     const clearCellButton = document.getElementById('btnClear');
     view3DButton.addEventListener('click', scene.switchTo3D, false);
     view2DButton.addEventListener('click', scene.switchTo2D, false);
-    //clearCellButton.addEventListener('click', scene.clearCell, false);
-    clearCellButton.addEventListener(
-        'click',
-        () => {
-            exports.test();
-        },
-        false,
-    );
+    clearCellButton.addEventListener('click', scene.clearCell, false);
 };
