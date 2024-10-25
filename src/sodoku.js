@@ -40,11 +40,20 @@ export async function createSodoku() {
     }
 
     function validateSodokuPuzzel() {
-        // Lấy bộ nhớ WebAssembly
+        // Chuỗi mà bạn muốn truyền vào WebAssembly
+        const inputString = '';
+        for (let x = 0; x < 9; x++) {
+            for (let y = 0; y < 9; y++) {
+                for (let z = 0; z < 9; z++) {
+                    inputString += sodokuBox[x][y][z].value
+                        ? sodokuBox[x][y][z].value.toString()
+                        : sodokuBox[x][y][z].userValue.toString();
+                }
+            }
+        }
         const _memory = result.instance.exports.memory;
         const validatePuzzle = result.instance.exports.validatePuzzle;
-        // Chuỗi mà bạn muốn truyền vào WebAssembly
-        const inputString = '123123';
+
         // Chuyển chuỗi từ JavaScript thành byte array và sao chép vào bộ nhớ WebAssembly
         function stringToMemory(str, __memory) {
             const encoder = new TextEncoder(); // Mã hóa chuỗi thành byte (UTF-8)

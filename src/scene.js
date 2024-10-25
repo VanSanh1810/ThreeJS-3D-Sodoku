@@ -67,7 +67,7 @@ export async function createScene() {
             const zCol = [];
             for (let z = 0; z < 9; z++) {
                 const cell = createCell(sodoku.sodokuBox[x][y][z].value, sodoku.sodokuBox[x][y][z].cordinate);
-                if (sodoku.sodokuBox[x][y][z].value) {
+                if (!sodoku.sodokuBox[x][y][z].value) {
                     emptyCountCell++;
                 }
                 zCol.push(cell);
@@ -296,7 +296,11 @@ export async function createScene() {
                 if (!isClue && sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].value === undefined) {
                     // add only value
                     sodoku.sodokuBox[cell_.cordinate.x][cell_.cordinate.x][cell_.cordinate.x].userValue = number;
-                    emptyCountCell--;
+                    emptyCountCell = emptyCountCell - 1;
+                    if (emptyCountCell === 0) {
+                        let res = sodoku.validateSodokuPuzzel();
+                        console.log(res);
+                    }
                 }
             });
         } catch (e) {
