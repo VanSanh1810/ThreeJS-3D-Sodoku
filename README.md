@@ -13,15 +13,6 @@ This project is a clone of the [Actual 3D Sudoku game](https://aaron-f-bianchi.i
 ## Introduction
 ThreeJS 3D Sudoku challenges players to complete a 3D Sudoku puzzle by rotating and positioning numbers on a cube, with WebAssembly providing high-performance puzzle generation. This addition speeds up game setup, delivering a smooth, optimized experience even for larger or more complex puzzles.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Buyers browse the store categories, products and brands
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Sellers or Merchants manage their own brand component
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Admins manage and control the entire platform components
-
-> This project have an API service associated with it. You can find it [here](https://gitlab.com/kltl-ute/242k/02-be).
-
-
 ## Features
 
 - 3D Puzzle Gameplay: Navigate and solve a Sudoku puzzle on a rotating 3D cube and solve like normal 2D sodoku on each axis plane.
@@ -31,7 +22,7 @@ ThreeJS 3D Sudoku challenges players to complete a 3D Sudoku puzzle by rotating 
 ## Setup
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Clone this repo 
 ```bash
-  git clone https://github.com/your-username/actual-3d-sudoku-clone.git
+  git clone https://github.com/VanSanh1810/ThreeJS-3D-Sodoku.git
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Navigate to the project directory
 ```bash
@@ -51,6 +42,7 @@ ThreeJS 3D Sudoku challenges players to complete a 3D Sudoku puzzle by rotating 
 ## Instructions
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Goal: Place numbers on each side of the cube, ensuring no duplicate numbers appear in any row, column, or 3x3 sub-grid.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Controls:
 - Hold and move left mouse to change the view angle.
 - Click left mouse to select one cell, use with CTRL for multiple selection.
